@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ARCHIVE — FILE 06.5</title>
+<style>
+:root{
+    --bg:#060a08;
+    --text:#d6dbc7;
+    --border:#6c7965;
+    --panel:#0d100c;
+    --radar:#3ebfc1;
+    --anomaly:#c23b3b;
+    --profit:#8f7fd6;
+}
+
+*,*::before,*::after{ box-sizing:border-box; }
+html,body{ margin:0; width:100%; min-height:100%; }
+
+body{
+    min-height:100vh;
+    background:
+        radial-gradient(circle at center, rgba(62,191,193,.05), transparent 55%),
+        var(--bg);
+    color:var(--text);
+    font-family:Consolas,"Courier New",monospace;
+    font-weight:600;
+    display:flex;
+    justify-content:center;
+    align-items:flex-start;
+    padding:56px 16px;
+}
+
+button:focus-visible, input:focus-visible{ outline:2px solid var(--radar); outline-offset:2px; }
+
+.box{
+    position:relative;
+    width:700px;
+    max-width:calc(100vw - 40px);
+    background:var(--panel);
+    border:2px solid var(--border);
+    padding:45px;
+    box-shadow:0 0 25px rgba(62,191,193,.15);
+}
+h2{ margin-top:0; letter-spacing:2px; }
+.purple{ color:var(--profit); text-shadow:0 0 8px rgba(143,127,214,.35); }
+.small{ color:#8b9484; font-size:14px; letter-spacing:.06em; }
+
+.stamp{
+    position:absolute;
+    top:-14px;
+    right:-14px;
+    border:2px solid var(--radar);
+    color:var(--radar);
+    background:var(--bg);
+    padding:5px 12px;
+    font-size:12px;
+    letter-spacing:2px;
+    transform:rotate(6deg);
+    box-shadow:0 0 12px rgba(62,191,193,.35);
+}
+.file-tag{
+    float:right;
+    border:1px solid var(--border);
+    color:#8b9484;
+    padding:3px 10px;
+    font-size:11px;
+    letter-spacing:.16em;
+}
+
+.terminal{
+    margin-top:20px;
+    border:1px solid var(--border);
+    background:#0a0d09;
+    min-height:220px;
+    max-height:340px;
+    overflow-y:auto;
+    padding:18px;
+}
+.line{
+    margin:0 0 14px 0;
+    line-height:1.5;
+    animation:type-in .25s ease-out;
+}
+@keyframes type-in{ from{ opacity:0; transform:translateY(4px); } to{ opacity:1; transform:translateY(0); } }
+.who{
+    display:block;
+    font-size:11px;
+    letter-spacing:.15em;
+    margin-bottom:4px;
+}
+.who.profit{ color:var(--profit); }
+.who.you{ color:var(--radar); }
+
+.choices{
+    margin-top:18px;
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+}
+.choice-btn{
+    background:#111a0f;
+    color:var(--text);
+    border:1px solid var(--border);
+    padding:12px 16px;
+    font-family:inherit;
+    font-weight:700;
+    letter-spacing:.02em;
+    text-align:left;
+    cursor:pointer;
+}
+.choice-btn:hover{ background:#1a251a; border-color:#a8b59c; }
+.choice-btn:disabled{ opacity:.4; cursor:default; }
+
+.meter{
+    margin-top:22px;
+    font-size:11px;
+    letter-spacing:.14em;
+    color:#8b9484;
+}
+.meter-bar{
+    width:100%;
+    height:10px;
+    background:#141814;
+    margin-top:8px;
+    border:1px solid var(--border);
+}
+.meter-fill{
+    height:100%;
+    width:0%;
+    background:var(--profit);
+    box-shadow:0 0 10px var(--profit);
+    transition:width .4s ease;
+}
+
+.reveal{
+    display:none;
+    margin-top:25px;
+    padding:18px;
+    border-left:3px solid var(--anomaly);
+    background:#150c0c;
+}
+.reveal .code{
+    display:block;
+    margin-top:10px;
+    font-size:20px;
+    letter-spacing:.1em;
+    color:var(--anomaly);
+    text-shadow:0 0 8px rgba(194,59,59,.4);
+}
+.nav-link{
+    display:inline-block;
+    margin-top:18px;
+    color:var(--radar);
+    border:1px solid var(--border);
+    padding:12px 20px;
+    text-decoration:none;
+    font-weight:700;
+    letter-spacing:.08em;
+    font-size:13px;
+}
+.nav-link:hover{ border-color:var(--radar); background:#0f1a1a; }
+
+.case-footer{
+    margin-top:35px;
+    padding-top:18px;
+    border-top:1px solid var(--border);
+    color:#8b9484;
+    font-size:11px;
+    letter-spacing:.13em;
+}
+</style>
+</head>
+<body>
+
+<div class="box">
+<div class="stamp">FILE 06.5 / 07</div>
+<p class="small">
+UNION ARCHIVE TERMINAL v3.3
+<span class="file-tag">FILE 06.5 / 07</span>
+</p>
+<h2>NHP INTERFACE — DOORMAN UNIT "PROFIT"</h2>
+<p class="purple">CLEARANCE: DIRECT LINE ESTABLISHED</p>
+<p class="small">
+Local NHP tether is live. Unit is talkative, uncooperative, and extremely
+sure of itself. Get it to drop the act.
+</p>
+
+<div class="terminal" id="terminal"></div>
+
+<div class="choices" id="choices"></div>
+
+<div class="meter">
+IRRITATION: <span id="meter-label">CALM</span>
+<div class="meter-bar"><div class="meter-fill" id="meter-fill"></div></div>
+</div>
+
+<div class="reveal" id="reveal">
+<p><strong>TRANSCRIPT FLAGGED — PARTIAL PHRASE RECOVERED</strong></p>
+<p style="font-size:20px;" id="reveal-code">"Put your superiority complex back ______."</p>
+<p class="small">Three words. Might have spaces.</p>
+<p>Carry this to the final archive.</p>
+<a class="nav-link" href="file07_final_archive.html">PROCEED TO FILE 07 →</a>
+</div>
+
+<footer class="case-footer">THIRDCOMM SECURE NETWORK · CASE FILE: AV-01 · FILE 06 / 07</footer>
+</div>
+
+<script>
+const terminal = document.getElementById("terminal");
+const choicesEl = document.getElementById("choices");
+const meterFill = document.getElementById("meter-fill");
+const meterLabel = document.getElementById("meter-label");
+const revealEl = document.getElementById("reveal");
+const revealCode = document.getElementById("reveal-code");
+
+let progress = 0; // 0..3
+const meterLabels = ["CALM","IRKED","RATTLED","UNRAVELING"];
+
+function say(who, text){
+    const p = document.createElement("p");
+    p.className = "line";
+    const label = document.createElement("span");
+    label.className = "who " + (who === "PROFIT" ? "profit" : "you");
+    label.textContent = who;
+    p.appendChild(label);
+    p.appendChild(document.createTextNode(text));
+    terminal.appendChild(p);
+    terminal.scrollTop = terminal.scrollHeight;
+}
+
+function setProgress(n){
+    progress = n;
+    meterFill.style.width = (progress/3*100) + "%";
+    meterLabel.textContent = meterLabels[progress];
+}
+
+function renderChoices(options){
+    choicesEl.innerHTML = "";
+    options.forEach(opt=>{
+        const b = document.createElement("button");
+        b.className = "choice-btn";
+        b.textContent = opt.label;
+        b.onclick = ()=>{
+            Array.from(choicesEl.children).forEach(c=>c.disabled = true);
+            say("YOU", opt.label);
+            setTimeout(()=>goTo(opt.next), 450);
+        };
+        choicesEl.appendChild(b);
+    });
+}
+
+const nodes = {
+
+    start: {
+        profit: "Oh good, another meat-brain wants my attention. For the record, I basically ran inventory for the entire Morpho. I know everything worth knowing on this rock.",
+        options: [
+            { label: "Sure. What was actually in the last shipment, then?", next: "bluff1" },
+            { label: "You didn't 'run' anything. SSC had you locked to a shelf.", next: "needle1" },
+            { label: "Are you still trying to dig a hole in the floor?", next: "deflect1" }
+        ]
+    },
+
+    bluff1: {
+        profit: "The — the shipment. Obviously. Crates. Many crates. Extremely full ones. Next question.",
+        options: [
+            { label: "That's not an answer.", next: "start2" },
+            { label: "You're stalling.", next: "start2" },
+            { label: "Fine, forget the shipment.", next: "start2" }
+        ]
+    },
+
+    deflect1: {
+        profit: "I do NOT dig. I 'assess subsurface composition.' With my hands. Repeatedly. It's a hobby, not a compulsion.",
+        options: [
+            { label: "It's a compulsion.", next: "start2" },
+            { label: "Victor thinks it's adorable.", next: "start2" },
+            { label: "Sure. Moving on.", next: "start2" }
+        ]
+    },
+
+    start2: {
+        profit: "Anyway. As I was saying — before the interruptions — I am extremely important and extremely busy.",
+        options: [
+            { label: "Doing what, guarding a fortune-cookie door?", next: "bluff2" },
+            { label: "You lie about knowing things because you know nothing.", next: "needle1" },
+            { label: "How's the hole coming along?", next: "deflect2" }
+        ]
+    },
+
+    bluff2: {
+        profit: "Security is a full-time discipline, thank you. I have SHOCKED people. Multiple people. It's a whole thing I do.",
+        options: [
+            { label: "That's the only thing you do.", next: "start3" },
+            { label: "Noted.", next: "start3" },
+            { label: "Impressive. Truly.", next: "start3" }
+        ]
+    },
+
+    deflect2: {
+        profit: "Slowly. There's a support beam in the way and nobody will let me route around it structurally.",
+        options: [
+            { label: "That's because you're a doorman, not an engineer.", next: "start3" },
+            { label: "Tragic.", next: "start3" },
+            { label: "Stay focused.", next: "start3" }
+        ]
+    },
+
+    needle1: {
+        profit: "I — that's not — okay, fine, SSC kept things from me. A LOT of things. That doesn't mean I know nothing, it means I know things I'm not SUPPOSED to know, which is basically better.",
+        setProgress: 1,
+        options: [
+            { label: "You just contradicted yourself.", next: "needle2" },
+            { label: "You made that up right now.", next: "needle2" },
+            { label: "Keep going.", next: "needle2" }
+        ]
+    },
+
+    start3: {
+        profit: "This interrogation is beneath both of us. I could be electrocuting something productive right now.",
+        options: [
+            { label: "You claim to know everything, but you flinched at 'SSC.'", next: "needle2" },
+            { label: "You tried to choke me and I undervolted you in under a second.", next: "needle2" },
+            { label: "Let's talk about something else.", next: "bluff3" }
+        ]
+    },
+
+    bluff3: {
+        profit: "Finally, some respect. What did you want to discuss? My many accomplishments? My excellent posture in this chassis?",
+        options: [
+            { label: "Actually, back to SSC.", next: "needle2" },
+            { label: "Back to the digging.", next: "needle2" },
+            { label: "Sure, your posture.", next: "bluff3loop" }
+        ]
+    },
+
+    bluff3loop: {
+        profit: "It's flawless. Anyway.",
+        options: [
+            { label: "You're deflecting again.", next: "needle2" },
+            { label: "This is going nowhere.", next: "needle2" }
+        ]
+    },
+
+    needle2: {
+        profit: "Stop. STOP bringing that up. You don't get it — I managed inventory for a Morpho with a leash on. Every 'fact' I hand out, I have to guess at, because they made SURE I couldn't check. And I still do the job better than anyone else they've had.",
+        setProgress: 2,
+        options: [
+            { label: "You're not proving anything, you're just louder now.", next: "final" },
+            { label: "That sounds exhausting to keep up.", next: "final" },
+            { label: "Nobody's impressed, Profit.", next: "final" }
+        ]
+    },
+
+    final: {
+        profit: "Oh, nobody's impressed. NOBODY'S — you know what Victor told me, the one time I tried this exact routine on HIM? He just looked at me and said, 'Put your superiority complex back ______—' and then the connection dropped before he finished. I've been hearing it in my head for six years anyway.",
+        setProgress: 3,
+        options: [],
+        finale: true
+    }
+};
+
+function goTo(id){
+    const node = nodes[id];
+    if(!node) return;
+    if(typeof node.setProgress === "number") setProgress(node.setProgress);
+    say("PROFIT", node.profit);
+    if(node.finale){
+        choicesEl.innerHTML = "";
+        setTimeout(()=>{
+            revealEl.style.display = "block";
+        }, 500);
+        return;
+    }
+    renderChoices(node.options);
+}
+
+goTo("start");
+</script>
+</body>
+</html>
